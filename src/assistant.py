@@ -20,6 +20,7 @@ def speak(text, lang="en"):
 
 def get_audio():
     record = sr.Recognizer()
+    print('Say something')
     with sr.Microphone() as src:
         audio = record.listen(src)
         said = ''
@@ -47,6 +48,3 @@ def examples():
 
     elif "hello":
         speak('hellow, how are you?')
-
-    else:
-        speak("I don't understand what you are talking about, please, try again")

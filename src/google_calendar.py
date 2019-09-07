@@ -26,10 +26,10 @@ def authenticate_google():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                '../api/credentials.json', SCOPES)
+                'src/api/credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
        
-        with open('api/token.pickle', 'wb') as token:
+        with open('src/api/token.pickle', 'wb') as token:
             pickle.dump(creds, token)
 
     service = build('calendar', 'v3', credentials=creds)

@@ -8,7 +8,9 @@ from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
-
+MONTH = ['January','February','march','april',"may",'june','july','august','september','octuber','novenber','december']
+DAYS = ["monday", 'tuesday','wednesday','thursday','friday','saturday','sunday']
+DAYS_EXT = ["rd","th","st"]
 
 def authenticate_google():
     '''
@@ -54,6 +56,40 @@ def get_events(n, service):
 
     if not events:
         print('No upcoming events found.')
+
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
+
+
+def get_date(text):
+    text = text.lower()
+    today = datetime.date.today()
+
+    if text.count("today") > 0:
+        return today
+
+    day = -1
+    day_of_week = -1
+    month = -1
+    year = today.year
+
+    for word in text.split():
+        if word in MONTH:
+            month = MONTH.index(month) - 1
+
+        elif word in DAYS:
+            day_of_week = DAYS.index(word)
+
+        elif word.isdigit():
+            day = int(word)
+
+        else:
+            for ext in DAYS_EXT:
+                found = word.find(ext)
+
+                if found > 0:
+                    try:
+                        day = int(word[:found])
+                    except:
+                        pass

@@ -1,11 +1,12 @@
-from src.assistant import speak, play, get_audio
+from src.assistant import speak, play, get_audio, get_date
 from src.files import create_file, read_file
 from src.google_calendar import authenticate_google, get_events
 
 
 def main():
-    service = authenticate_google()
-    get_events(10, service)
+    #text = get_audio().lower()
+    text = str(input('Option: ')).lower()
+    print(get_date(text))
 
 
 if __name__ == "__main__":

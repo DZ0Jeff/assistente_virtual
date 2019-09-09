@@ -2,7 +2,12 @@ import playsound
 import speech_recognition as sr
 from gtts import gTTS
 import os
-import time
+import datetime
+
+
+MONTH = ['January','February','march','april',"may",'june','july','august','september','octuber','novenber','december']
+DAYS = ["monday", 'tuesday','wednesday','thursday','friday','saturday','sunday']
+DAYS_EXT = ["rd","th","st"]
 
 
 def play(text):
@@ -48,3 +53,55 @@ def examples():
 
     elif "hello":
         speak('hellow, how are you?')
+
+
+def get_date(text):
+    text = text.lower()
+    today = datetime.date.today()
+
+    if text.count("today") > 0:
+        return today
+
+    day = -1
+    day_of_week = -1
+    month = -1
+    year = today.year
+
+    for word in text.split():
+        if word in MONTH:
+            month = MONTH.index(word) - 1
+
+        elif word in DAYS:
+            day_of_week = DAYS.index(word)
+
+        elif word.isdigit():
+            day = int(word)
+
+        else:
+            for ext in DAYS_EXT:
+                found = word.find(ext)
+
+                if found > 0:
+                    try:
+                        day = int(word[:found])
+                    except:
+                        pass
+
+    if month < today.month and month != -1:
+        year = year + 1
+    
+    if day < today.day and month == -1 and day != -1:
+        month = month + 1 
+
+    if month == -1 and day == -1 and day_of_week != -1:
+        current_day_of_week = today.weekday() # 0 - 6
+        diference  = day_of_week - current_day_of_week
+
+        if diference < 0:
+            diference += 7 #go to next week
+            if text.count("next") >= 1:
+                diference += 7
+        
+        return today + datetime.timedelta(diference)
+
+    return datetime.date(month=month, day=day, year=year)

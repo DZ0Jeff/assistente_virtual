@@ -1,20 +1,26 @@
 import playsound
 import speech_recognition as sr
 from gtts import gTTS
+import pyttsx3
 import os
 import datetime
 
-
-MONTH = ['January','February','march','april',"may",'june','july','august','september','octuber','novenber','december']
+MONTH = ['January','February','march','april',"may",'june','july','august','september','october','november','december']
 DAYS = ["monday", 'tuesday','wednesday','thursday','friday','saturday','sunday']
-DAYS_EXT = ["rd","th","st"]
+DAYS_EXT = ["rd","th","st","nd"]
 
 
 def play(text):
     playsound.playsound(text)
 
 
-def speak(text, lang="en"):
+def speak(text):
+    print('Iniciando...')
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
+
+def googleSpeak(text, lang="en"):
     tts = gTTS(text=text, lang=lang)
     filename = "voice.mp3"
     print('Saving...')
@@ -104,4 +110,7 @@ def get_date(text):
         
         return today + datetime.timedelta(diference)
 
-    return datetime.date(month=month, day=day, year=year)
+    if month == -1 and day == -1:
+        return None
+    else:
+        return datetime.date(month=month, day=day, year=year)

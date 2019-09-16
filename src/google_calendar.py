@@ -5,6 +5,7 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+import pytz
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
@@ -37,16 +38,22 @@ def authenticate_google():
     return service
     
 
-def get_events(n, service):
+def get_events(day, service):
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next n events on the user's calendar.
     """
 
-    now = datetime.datetime.utcnow().isoformat() + 'Z' 
-    print(f'Getting the upcoming {n} events')
+    date = datetime.datetime.combine(day, datetime.datetime.min.time())
+    end_date = datetime.datetime.combine(day, datetime.datetime.max.time())
+    utc = pytz.UTC
+    date = date.astimezone(utc)
+    end_date = end_date.astimezone(utc)
+
     events_result = service.events().list(
-        calendarId='primary', timeMin=now,
-        maxResults=n, singleEvents=True,
+        calendarId='primary', 
+        timeMin=date,
+        timeMax = end_date,
+        singleEvents=True,
         orderBy='startTime'
     ).execute()
 

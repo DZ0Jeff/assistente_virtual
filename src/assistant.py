@@ -20,6 +20,7 @@ def speak(text):
     engine.say(text)
     engine.runAndWait()
 
+
 def googleSpeak(text, lang="en"):
     tts = gTTS(text=text, lang=lang)
     filename = "voice.mp3"
@@ -29,7 +30,7 @@ def googleSpeak(text, lang="en"):
     print('DONE!')
 
 
-def get_audio():
+def get_audio(debug=False):
     record = sr.Recognizer()
     print('Say something')
     with sr.Microphone() as src:
@@ -38,7 +39,8 @@ def get_audio():
 
         try:
             said = record.recognize_google(audio)
-            print(said)
+            if debug:
+                print(said)
 
         except Exception as error:
             print("[Erro] Audio não detectado ou erro na conexão" + str(error))
@@ -52,7 +54,6 @@ def get_audio():
 def examples():
     speak("Hello")
     texto = get_audio()
-
 
     if "What is your name?" in texto:
         speak("My name is mud")
@@ -101,7 +102,7 @@ def get_date(text):
 
     if month == -1 and day == -1 and day_of_week != -1:
         current_day_of_week = today.weekday() # 0 - 6
-        diference  = day_of_week - current_day_of_week
+        diference = day_of_week - current_day_of_week
 
         if diference < 0:
             diference += 7 #go to next week
@@ -112,5 +113,6 @@ def get_date(text):
 
     if month == -1 and day == -1:
         return None
+
     else:
         return datetime.date(month=month, day=day, year=year)

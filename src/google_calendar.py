@@ -6,6 +6,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import pytz
+from src.assistant import speak
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
@@ -51,8 +52,8 @@ def get_events(day, service):
 
     events_result = service.events().list(
         calendarId='primary', 
-        timeMin=date,
-        timeMax = end_date,
+        timeMin=date.isoformat(),
+        timeMax=end_date.isoformat(),
         singleEvents=True,
         orderBy='startTime'
     ).execute()
@@ -60,9 +61,19 @@ def get_events(day, service):
     events = events_result.get('items', [])
 
     if not events:
-        print('No upcoming events found.')
+        speak('No upcoming events found.')
+    else:
+        speak(f'You have {len(events)} events this day')
+        for event in events:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+            print(start, event['summary'])
 
-    for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        print(start, event['summary'])
+            start_time = str(start.split("T")[1].split("-")[0])
+            if int(start_time.split(":")[0]) < 12:
+                start_time = start_time + "AM"
 
+            else:
+                start_time = str(int(start.split("T")[1].split("-")[0]) - 12)
+                start_time = start_time + "PM"
+
+            speak(f"{events['summary']} At {start_time}")

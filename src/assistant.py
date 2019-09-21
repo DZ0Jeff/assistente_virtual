@@ -10,7 +10,6 @@ def play(text):
 
 
 def speak(text):
-    print('Iniciando...')
     engine = pyttsx3.init()
     engine.say(text)
     engine.runAndWait()
@@ -43,7 +42,7 @@ def get_audio(debug=False):
         except KeyboardInterrupt:
             print('Ação cancelada pelo usuario!')
 
-    return said
+    return said.lower()
 
 
 def examples():
@@ -64,18 +63,6 @@ def note(text):
     with open(filename, "w") as file:
         file.write(text)
 
-    git = "C:/Program Files (x86)/Git/bin/git.exe"
-    vscode_filepath = "C:/Users/JMS/AppData/Local/Programs/Microsoft VS Code/Code.exe"
+    #git = "C:/Program Files (x86)/Git/bin/git.exe"
+    #vscode_filepath = "C:/Users/JMS/AppData/Local/Programs/Microsoft VS Code/Code.exe"
     subprocess.Popen(["notepad.exe", filename])
-
-
-def call_note(recive):
-    NOTE_STRS = ["make a note", "write this down", "remember this"]
-
-    for phrase in NOTE_STRS:
-        if phrase in recive:
-            speak("What you would like to make a note? ")
-            note_text = get_audio().lower()
-            note(note_text)
-            speak("I've made a note on that")
-

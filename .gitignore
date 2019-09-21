@@ -2,6 +2,8 @@
 /off
 /Downloads
 .idea
+.txt
+__pycache__
 
 credentials
 

@@ -78,27 +78,10 @@ def get_events(day, service):
                 start_time = start_time + "AM"
 
             else:
-                start_time = str(int(start.split("T")[1].split("-")[0]) - 12)
+                start_time = str(int(start.split("T")[1].split("-")[0]) - 12) + start_time.split(":")[1]
                 start_time = start_time + "PM"
 
-            speak(f"{events['summary']} At {start_time}")
-
-
-def calendar(audio):
-    option = int(input('Text[1] speak[2]: '))
-    text = input("Digite uma data: ") if option == 1 else audio
-    print(text)
-
-    CALENDAR_STRS = ["what i do have", "do i have plans", "am i busy", ""]
-
-    for phrase in CALENDAR_STRS:
-        if phrase in text.lower():
-            date = get_date(text)
-            if date:
-                service = authenticate_google()
-                get_events(date, service)
-            else:
-                speak('[ERROR]Try again')
+            speak(f"{events['summary']} At {start_time}")   
 
 
 def get_date(text):

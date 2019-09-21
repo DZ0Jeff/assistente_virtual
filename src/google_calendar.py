@@ -6,7 +6,12 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import pytz
-from src.assistant import speak
+from src.assistant import speak, get_audio
+
+# Date and weeks
+MONTH = ['January','February','march','april',"may",'june','july','august','september','october','november','december']
+DAYS = ["monday", 'tuesday','wednesday','thursday','friday','saturday','sunday']
+DAYS_EXT = ["rd","th","st","nd"]
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
@@ -77,3 +82,76 @@ def get_events(day, service):
                 start_time = start_time + "PM"
 
             speak(f"{events['summary']} At {start_time}")
+
+
+def calendar(audio):
+    option = int(input('Text[1] speak[2]: '))
+    text = input("Digite uma data: ") if option == 1 else audio
+    print(text)
+
+    CALENDAR_STRS = ["what i do have", "do i have plans", "am i busy", ""]
+
+    for phrase in CALENDAR_STRS:
+        if phrase in text.lower():
+            date = get_date(text)
+            if date:
+                service = authenticate_google()
+                get_events(date, service)
+            else:
+                speak('[ERROR]Try again')
+
+
+def get_date(text):
+    text = text.lower()
+    today = datetime.date.today()
+
+    if text.count("today") > 0:
+        return today
+
+    day = -1
+    day_of_week = -1
+    month = -1
+    year = today.year
+
+    for word in text.split():
+        if word in MONTH:
+            month = MONTH.index(word) - 1
+
+        elif word in DAYS:
+            day_of_week = DAYS.index(word)
+
+        elif word.isdigit():
+            day = int(word)
+
+        else:
+            for ext in DAYS_EXT:
+                found = word.find(ext)
+
+                if found > 0:
+                    try:
+                        day = int(word[:found])
+                    except:
+                        pass
+
+    if month < today.month and month != -1:
+        year = year + 1
+
+    if day < today.day and month == -1 and day != -1:
+        month = month + 1
+
+    if month == -1 and day == -1 and day_of_week != -1:
+        current_day_of_week = today.weekday()  # 0 - 6
+        diference = day_of_week - current_day_of_week
+
+        if diference < 0:
+            diference += 7  # go to next week
+            if text.count("next") >= 1:
+                diference += 7
+
+        return today + datetime.timedelta(diference)
+
+    if month == -1 and day == -1:
+        return None
+
+    else:
+        return datetime.date(month=month, day=day, year=year)
